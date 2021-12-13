@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ "${ASDF_INSTALL_TYPE}" == "version" ]; then
+  # move extracted files to install directory
+  mv "${ASDF_DOWNLOAD_PATH}"/* "${ASDF_INSTALL_PATH}"
+else
+  echo 'Only versioned installed are currently supported' 1>&2
+fi

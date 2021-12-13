@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+ARCHIVE_ROOT_URL="https://archive.apache.org/dist/tomcat/"
+
+function find_minor_versions() {
+  local major_version=$1
+  # URL parameters return results ordered ascending by modified date
+  local index_page_url="${ARCHIVE_ROOT_URL}/tomcat-${major_version}/?C=M;O=A"
+  curl --silent --location "${index_page_url}" |
+    grep -oE 'v[0-9.]+/' |
+    sed 's|v||' |
+    sed 's|/||' #|
+    #tr '\n' ' '
+}
+
+for i in $(seq 3 10); do
+  find_minor_versions ${i}
+done | tr '\n' ' '
+
+

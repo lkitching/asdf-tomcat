@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ "${ASDF_INSTALL_TYPE}" != "version" ]; then
+  echo 'Only versioned installs are currently supported' 1>&2
+  exit 1
+fi
+
+ARCHIVE_ROOT_URL="https://archive.apache.org/dist/tomcat"
+
+function get_major_version() {
+  local version=$1
+  echo "${version}" | cut -f 1 -d '.' -
+}
+
+function get_download_url() {
+  local version=$1
+  local major_version=$(get_major_version ${version})
+  echo "${ARCHIVE_ROOT_URL}/tomcat-${major_version}/v${version}/bin/apache-tomcat-${version}.tar.gz"
+}
+
+function download_version_to() {
+  local version=$1
+  local dest=$2
+
+  local version_download_url=$(get_download_url ${version})
+  local download_archive=$(mktemp -t 'asdf-tomcat')
+
+  echo $version_download_url
+
+  # fetch to temp location
+  curl --fail --silent --location -o "${download_archive}" "${version_download_url}"
+
+  # extract to destination directory
+  tar --strip-components 1 -C "${dest}" -xzf "${download_archive}"
+}
+
+download_version_to ${ASDF_INSTALL_VERSION} ${ASDF_DOWNLOAD_PATH}
