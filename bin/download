@@ -25,7 +25,7 @@ function download_version_to() {
   local dest=$2
 
   local version_download_url=$(get_download_url ${version})
-  local download_archive=$(mktemp -t 'asdf-tomcat')
+  local download_archive=$(mktemp "${TMPDIR:-/tmp}/asdf-tomcat.XXXXXXXX")
 
   # fetch to temp location
   curl --fail --silent --location -o "${download_archive}" "${version_download_url}"
